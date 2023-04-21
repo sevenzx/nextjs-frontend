@@ -1,0 +1,23 @@
+.layout {
+    border: 1px solid var(--semi-color-border);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+.skeleton {
+    border-radius: 10px;
+    border: 1px solid var(--semi-color-border);
+    height: 376px;
+    padding: 32px;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    color: var(--semi-color-text-2);
+    /*background-color: rgba(var(--semi-grey-0), 1);*/
+}
