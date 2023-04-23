@@ -9,7 +9,7 @@ import {
 } from '@douyinfe/semi-icons';
 import React, { ReactText, useEffect, useState } from 'react';
 import Head from 'next/head';
-import styles from '@/components/basic-framework.module.css';
+import styles from '@/components/navigation-frame.module.css';
 import { useRouter } from 'next/router';
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -41,7 +41,7 @@ function setBreadcrumbRoutes(items: any[], targetKey: ReactText, prefix = ''): s
   return result;
 }
 
-export default function BasicFramework({ children }: { children: React.ReactNode }) {
+export default function NavigationFrame({ children }: { children: React.ReactNode }) {
   const [selectedKeys, setSelectedKeys] = useState<ReactText[]>(['home']);
 
   const router = useRouter();

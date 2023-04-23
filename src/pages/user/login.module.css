@@ -1,0 +1,9 @@
+.div {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: auto;
+    /* 背景图片*/
+    background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+    background-size: 100% 100%
+}
