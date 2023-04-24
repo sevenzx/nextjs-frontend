@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Layout, Nav, Skeleton } from '@douyinfe/semi-ui';
+import { Avatar, Breadcrumb, Button, Dropdown, Layout, Nav, Skeleton } from '@douyinfe/semi-ui';
 import {
   IconBell,
   IconGithubLogo,
@@ -8,11 +8,16 @@ import {
   IconSetting,
 } from '@douyinfe/semi-icons';
 import React, { ReactText, useEffect, useState } from 'react';
+import Loading from '@/components/Loading';
 import Head from 'next/head';
 import styles from '@/components/navigation-frame.module.css';
 import { useRouter } from 'next/router';
+import { useUserStore } from '@/lib/useZustand';
+import { getCurrentUserUsingGET } from '@/services/api-platform-user/userController';
 
 const { Header, Footer, Sider, Content } = Layout;
+
+const CURRENT_USER_KEY: string = 'currentUser';
 
 /**
  * 根据itemKey获取层级文本
@@ -42,8 +47,10 @@ function setBreadcrumbRoutes(items: any[], targetKey: ReactText, prefix = ''): s
 }
 
 export default function NavigationFrame({ children }: { children: React.ReactNode }) {
+  const user = useUserStore((state) => state.user);
+  const setUserInfo = useUserStore((state) => state.setUserInfo);
   const [selectedKeys, setSelectedKeys] = useState<ReactText[]>(['home']);
-
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   const routes = [
@@ -62,21 +69,47 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
 
   // 如果是通过URL直接访问 需要设置Nav的selectedKeys来定位导航栏
   useEffect(() => {
+    // 是否登录
+    let userJsonStr = localStorage.getItem(CURRENT_USER_KEY);
+    if (userJsonStr === null) {
+      // 路由到/login
+      router.push('/user/login').then((result) => {
+        if (!result) {
+          console.log('router1 push failed');
+        }
+      });
+    }
+    // @ts-ignore
+    // let userJson = JSON.parse(userJsonStr) as API.UserVO;
+
+    // 去后端查询当前用户信息用于动态刷新
+    getCurrentUserUsingGET().then((res) => {
+      setUserInfo(res.data as API.UserVO);
+      console.log(res);
+    });
+
     const { pathname } = router;
     if (pathname === '/') {
       setSelectedKeys(['/home']);
       // 路由到/home
       router.push('/home').then((result) => {
         if (!result) {
-          console.log('router push failed');
+          console.log('router1 push failed');
         }
       });
     } else {
       setSelectedKeys([pathname]);
     }
+    // 设置延时取消加载
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
   }, []);
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <Layout className={styles.frame}>
       {/*写进document的head*/}
       <Head>
@@ -109,9 +142,19 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
                   marginRight: '12px',
                 }}
               />
-              <Avatar color="orange" size="small">
-                玄
-              </Avatar>
+              <Dropdown
+                trigger={'click'}
+                position={'bottom'}
+                render={
+                  <Dropdown.Menu>
+                    {/*TODO onClick*/}
+                    <Dropdown.Item>修改信息</Dropdown.Item>
+                    <Dropdown.Item>退出登录</Dropdown.Item>
+                  </Dropdown.Menu>
+                }
+              >
+                <Avatar size="small" src={user?.userAvatar} />
+              </Dropdown>
             </>
           }
         ></Nav>

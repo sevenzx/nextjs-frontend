@@ -6,11 +6,13 @@ import {
 
 export default function TablePage() {
   return (
-    <Empty
-      image={<IllustrationConstruction style={{ width: 150, height: 150 }} />}
-      darkModeImage={<IllustrationConstructionDark style={{ width: 150, height: 150 }} />}
-      title={'表格制作中'}
-      description="当前功能暂未开放，敬请期待。"
-    />
+    <div>
+      <Empty
+        image={<IllustrationConstruction style={{ width: 150, height: 150 }} />}
+        darkModeImage={<IllustrationConstructionDark style={{ width: 150, height: 150 }} />}
+        title={'表格制作中'}
+        description="当前功能暂未开放，敬请期待。"
+      />
+    </div>
   );
 }
