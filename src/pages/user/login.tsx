@@ -3,16 +3,16 @@ import styles from './login.module.css';
 import { userLoginUsingPOST } from '@/services/api-platform-user/userController';
 import { useUserStore } from '@/lib/useZustand';
 import { useRouter } from 'next/router';
+import { CURRENT_USER_KEY } from '@/config/constant.config';
 
 export default function TablePage() {
   const router = useRouter();
 
-  const userLogin = useUserStore((state) => state.userLogin);
-
   async function login(values: API.UserLoginDTO) {
     let res = (await userLoginUsingPOST(values)) as API.ResultUserVO;
     if (res) {
-      userLogin(res.data as API.UserVO);
+      useUserStore.setState({ user: res.data });
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(res.data));
       await router.push('/home');
     }
   }
@@ -20,7 +20,7 @@ export default function TablePage() {
   return (
     <div className={styles.container}>
       <Form onSubmit={(values) => login(values)} style={{ width: 400 }}>
-        {({ formState, values, formApi }) => (
+        {({ values }) => (
           <>
             <Form.Input
               field="userAccount"

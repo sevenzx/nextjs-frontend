@@ -7,17 +7,19 @@ import {
   IconList,
   IconSetting,
 } from '@douyinfe/semi-icons';
-import React, { ReactText, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loading from '@/components/Loading';
 import Head from 'next/head';
 import styles from '@/components/navigation-frame.module.css';
 import { useRouter } from 'next/router';
 import { useUserStore } from '@/lib/useZustand';
-import { getCurrentUserUsingGET } from '@/services/api-platform-user/userController';
+import {
+  getCurrentUserUsingGET,
+  userLogoutUsingPOST,
+} from '@/services/api-platform-user/userController';
+import { CURRENT_USER_KEY } from '@/config/constant.config';
 
 const { Header, Footer, Sider, Content } = Layout;
-
-const CURRENT_USER_KEY: string = 'currentUser';
 
 /**
  * 根据itemKey获取层级文本
@@ -25,7 +27,7 @@ const CURRENT_USER_KEY: string = 'currentUser';
  * @param targetKey
  * @param prefix
  */
-function setBreadcrumbRoutes(items: any[], targetKey: ReactText, prefix = ''): string[] {
+function setBreadcrumbRoutes(items: any[], targetKey: string, prefix = ''): string[] {
   let result: string[] = [];
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -49,7 +51,7 @@ function setBreadcrumbRoutes(items: any[], targetKey: ReactText, prefix = ''): s
 export default function NavigationFrame({ children }: { children: React.ReactNode }) {
   const user = useUserStore((state) => state.user);
   const setUserInfo = useUserStore((state) => state.setUserInfo);
-  const [selectedKeys, setSelectedKeys] = useState<ReactText[]>(['home']);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>(['home']);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
@@ -79,8 +81,6 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
         }
       });
     }
-    // @ts-ignore
-    // let userJson = JSON.parse(userJsonStr) as API.UserVO;
 
     // 去后端查询当前用户信息用于动态刷新
     getCurrentUserUsingGET().then((res) => {
@@ -106,6 +106,13 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
     }, 300);
     return () => clearTimeout(timer);
   }, []);
+
+  const userLogout = async () => {
+    localStorage.removeItem(CURRENT_USER_KEY);
+    // window.location.href = '/user/login';
+    await userLogoutUsingPOST();
+    await router.push('/user/login');
+  };
 
   return loading ? (
     <Loading />
@@ -149,7 +156,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
                   <Dropdown.Menu>
                     {/*TODO onClick*/}
                     <Dropdown.Item>修改信息</Dropdown.Item>
-                    <Dropdown.Item>退出登录</Dropdown.Item>
+                    <Dropdown.Item onClick={() => userLogout()}>退出登录</Dropdown.Item>
                   </Dropdown.Menu>
                 }
               >
@@ -166,6 +173,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
             selectedKeys={selectedKeys}
             onSelect={(data) => {
               console.log('trigger onSelect: ', data.selectedKeys);
+              // @ts-ignore
               setSelectedKeys(data.selectedKeys);
               // @ts-ignore
               router.push(data.selectedKeys[0]).then((result) => {
