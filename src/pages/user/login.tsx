@@ -3,7 +3,7 @@ import styles from './login.module.css';
 import { userLoginUsingPOST } from '@/services/api-platform-user/userController';
 import { useUserStore } from '@/lib/useZustand';
 import { useRouter } from 'next/router';
-import { CURRENT_USER_KEY } from '@/config/constant.config';
+import { CURRENT_USER_KEY } from '@/config/constant';
 
 export default function TablePage() {
   const router = useRouter();

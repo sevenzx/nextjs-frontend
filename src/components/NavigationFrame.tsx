@@ -17,7 +17,7 @@ import {
   getCurrentUserUsingGET,
   userLogoutUsingPOST,
 } from '@/services/api-platform-user/userController';
-import { CURRENT_USER_KEY } from '@/config/constant.config';
+import { CURRENT_USER_KEY } from '@/config/constant';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -94,7 +94,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
       // 路由到/home
       router.push('/home').then((result) => {
         if (!result) {
-          console.log('router1 push failed');
+          console.log('router push failed');
         }
       });
     } else {
@@ -128,7 +128,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
             logo: (
               <img src="//lf1-cdn-tos.bytescm.com/obj/ttfe/ies/semi/webcast_logo.svg" alt="logo" />
             ),
-            text: 'API PLATFORM',
+            text: 'NEXT PLATFORM',
           }}
           mode="horizontal"
           footer={
