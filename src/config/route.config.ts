@@ -9,7 +9,7 @@ interface RouteConfig {
 
 /**
  * 路由配置
- * role 限制权限
+ * role 权限控制
  */
 export const ROUTE_CONFIG: RouteConfig[] = [
   { path: '/home', text: '首页', icon: 'home' },
@@ -28,6 +28,9 @@ export const ROUTE_CONFIG: RouteConfig[] = [
 
 /** 首页路径 */
 export const HOME_PAGE_PATH: string = '/home';
+
+/** 403路径 */
+export const FORBIDDEN_PATH: string = '/403';
 
 /** 用户登录路径 */
 export const USER_LOGIN_PATH: string = '/user/login';

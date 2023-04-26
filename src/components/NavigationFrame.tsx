@@ -17,7 +17,11 @@ import {
   getCurrentUserUsingGET,
   userLogoutUsingPOST,
 } from '@/services/api-platform-user/userController';
-import { ROUTE_CONFIG, HOME_PAGE_PATH, USER_LOGIN_PATH } from '@/config/route.config';
+import {
+  ROUTE_CONFIG,
+  USER_LOGIN_PATH,
+  FORBIDDEN_PATH,
+} from '@/config/route.config';
 import { APP_NAME } from '@/config/constant';
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -93,9 +97,12 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
   };
 
   useEffect(() => {
+    const { pathname } = router;
+
     // 查看当前用户信息 是否登录
     getCurrentUserUsingGET().then((res) => {
-      if (res.data === null) {
+      let currentUser = res.data;
+      if (currentUser === null) {
         // 路由到/login
         router.push(USER_LOGIN_PATH).then((result) => {
           if (!result) {
@@ -103,24 +110,41 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
           }
         });
       } else {
-        setUserInfo(res.data as API.UserVO);
+        setUserInfo(currentUser as API.UserVO);
+        // 权限控制
+        let routeRole: string[] = [];
+        for (let i = 0; i < ROUTE_CONFIG.length; i++) {
+          const route = ROUTE_CONFIG[i];
+          if (route.path === pathname) {
+            routeRole = route.role || [];
+            break;
+          }
+          if (route.items) {
+            for (let j = 0; j < route.items.length; j++) {
+              const item = route.items[j];
+              if (item.path === pathname) {
+                // 子项如果没配置权限 继承父项的权限
+                if (item.role) {
+                  routeRole = item.role;
+                } else {
+                  routeRole = route.role || [];
+                }
+              }
+            }
+          }
+        }
+        // @ts-ignore
+        // 无权限访问
+        if (routeRole.length > 0 && !routeRole.includes(currentUser.userRole)) {
+          router.push(FORBIDDEN_PATH);
+        }
         console.log(res);
       }
     });
 
-    // 如果是通过URL直接访问 需要设置Nav的selectedKeys来定位导航栏
-    const { pathname } = router;
-    if (pathname === '/') {
-      setSelectedKeys([HOME_PAGE_PATH]);
-      // 路由到/home
-      router.push(HOME_PAGE_PATH).then((result) => {
-        if (!result) {
-          console.log('router push failed');
-        }
-      });
-    } else {
-      setSelectedKeys([pathname]);
-    }
+    // 需要设置Nav的selectedKeys来定位导航栏
+    setSelectedKeys([pathname]);
+
     // 设置延时取消加载
     const timer = setTimeout(() => {
       setLoading(false);
