@@ -23,7 +23,7 @@ instance.interceptors.response.use(
     const { data } = response as unknown as ResponseStructure
     console.log('axios全局拦截响应数据 data', data)
     if (data.code !== 0) {
-      throw new Error(data.message)
+      console.error((data.message))
     }
     return data
   },

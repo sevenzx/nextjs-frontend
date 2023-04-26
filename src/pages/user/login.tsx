@@ -3,7 +3,7 @@ import styles from './login.module.css';
 import { userLoginUsingPOST } from '@/services/api-platform-user/userController';
 import { useUserStore } from '@/lib/useZustand';
 import { useRouter } from 'next/router';
-import { CURRENT_USER_KEY } from '@/config/constant';
+import { HOME_PAGE_PATH } from '@/config/route.config';
 
 export default function TablePage() {
   const router = useRouter();
@@ -12,8 +12,7 @@ export default function TablePage() {
     let res = (await userLoginUsingPOST(values)) as API.ResultUserVO;
     if (res) {
       useUserStore.setState({ user: res.data });
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(res.data));
-      await router.push('/home');
+      await router.push(HOME_PAGE_PATH);
     }
   }
 

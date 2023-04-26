@@ -1,17 +1,21 @@
-interface RouteItem {
+interface RouteConfig {
   path: string;
   text: string;
   icon?: string;
   role?: string[];
-  items?: RouteItem[];
+  items?: RouteConfig[];
   itemKey?: string;
 }
 
-export const routeConfig: RouteItem[] = [
+/**
+ * 路由配置
+ * role 限制权限
+ */
+export const ROUTE_CONFIG: RouteConfig[] = [
   { path: '/home', text: '首页', icon: 'home' },
   { path: '/table', text: '表格', icon: 'list' },
   {
-    path: 'manage',
+    path: '/manage',
     text: '管理',
     icon: 'setting',
     role: ['admin'],
@@ -21,3 +25,12 @@ export const routeConfig: RouteItem[] = [
     ],
   },
 ];
+
+/** 首页路径 */
+export const HOME_PAGE_PATH: string = '/home';
+
+/** 用户登录路径 */
+export const USER_LOGIN_PATH: string = '/user/login';
+
+/** 用户注册路径 */
+export const USER_REGISTER_PATH: string = '/user/register';

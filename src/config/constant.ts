@@ -1,1 +1,2 @@
-export const CURRENT_USER_KEY: string = 'currentUser';
+/** App name */
+export const APP_NAME: string = 'NEXT PLATFORM';

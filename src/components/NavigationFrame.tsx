@@ -17,31 +17,32 @@ import {
   getCurrentUserUsingGET,
   userLogoutUsingPOST,
 } from '@/services/api-platform-user/userController';
-import { CURRENT_USER_KEY } from '@/config/constant';
+import { ROUTE_CONFIG, HOME_PAGE_PATH, USER_LOGIN_PATH } from '@/config/route.config';
+import { APP_NAME } from '@/config/constant';
 
 const { Header, Footer, Sider, Content } = Layout;
 
 /**
- * 根据itemKey获取层级文本
+ * 根据path获取层级文本
  * @param items
  * @param targetKey
- * @param prefix
  */
-function setBreadcrumbRoutes(items: any[], targetKey: string, prefix = ''): string[] {
+function setBreadcrumbRouteList(items: any[], targetKey: string): string[] {
   let result: string[] = [];
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    const itemText = `${prefix}${item.text}`;
-    if (item.itemKey === targetKey) {
-      result.push(itemText);
+    if (item.path === targetKey) {
+      result.push(item.text);
       break;
     }
     if (item.items) {
-      const subResult = setBreadcrumbRoutes(item.items, targetKey, `${prefix}`);
-      if (subResult.length) {
-        result.push(itemText);
-        result = result.concat(subResult);
-        break;
+      for (let j = 0; j < item.items.length; j++) {
+        const subItem = item.items[j];
+        if (subItem.path === targetKey) {
+          result.push(item.text);
+          result.push(subItem.text);
+          break;
+        }
       }
     }
   }
@@ -49,50 +50,70 @@ function setBreadcrumbRoutes(items: any[], targetKey: string, prefix = ''): stri
 }
 
 export default function NavigationFrame({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const user = useUserStore((state) => state.user);
   const setUserInfo = useUserStore((state) => state.setUserInfo);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(['home']);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
 
-  const routes = [
-    { itemKey: '/home', text: '首页', icon: <IconHome size="large" /> },
-    { itemKey: '/table', text: '表格', icon: <IconList size="large" /> },
-    {
-      itemKey: 'manage',
-      text: '管理',
-      icon: <IconSetting size="large" />,
-      items: [
-        { itemKey: '/manage/data', text: '基础数据' },
-        { itemKey: '/manage/test', text: '测试功能' },
-      ],
-    },
-  ];
+  const userLogout = async () => {
+    await userLogoutUsingPOST();
+    await router.push(USER_LOGIN_PATH);
+  };
 
-  // 如果是通过URL直接访问 需要设置Nav的selectedKeys来定位导航栏
+  // 通过路由配置生成Nav的items
+  const getNavItems = () => {
+    // 按需求配置icon
+    const config2Icon = {
+      home: <IconHome size={'large'} />,
+      list: <IconList size={'large'} />,
+      setting: <IconSetting size={'large'} />,
+    };
+
+    return ROUTE_CONFIG.filter((route) => {
+      // 过滤掉不需要的元素
+      return !route.role || route.role.includes(user?.userRole as string);
+    }).map((route) => {
+      let newRoute = { ...route };
+      newRoute.itemKey = route.path;
+      // @ts-ignore
+      newRoute.icon = config2Icon[route.icon];
+      if (route.items) {
+        newRoute.items = route.items
+          .filter((item) => {
+            return !item.role || item.role.includes(user?.userRole as string);
+          })
+          .map((item) => {
+            item.itemKey = item.path;
+            return item;
+          });
+      }
+      return newRoute;
+    });
+  };
+
   useEffect(() => {
-    // 是否登录
-    let userJsonStr = localStorage.getItem(CURRENT_USER_KEY);
-    if (userJsonStr === null) {
-      // 路由到/login
-      router.push('/user/login').then((result) => {
-        if (!result) {
-          console.log('router1 push failed');
-        }
-      });
-    }
-
-    // 去后端查询当前用户信息用于动态刷新
+    // 查看当前用户信息 是否登录
     getCurrentUserUsingGET().then((res) => {
-      setUserInfo(res.data as API.UserVO);
-      console.log(res);
+      if (res.data === null) {
+        // 路由到/login
+        router.push(USER_LOGIN_PATH).then((result) => {
+          if (!result) {
+            console.log('router1 push failed');
+          }
+        });
+      } else {
+        setUserInfo(res.data as API.UserVO);
+        console.log(res);
+      }
     });
 
+    // 如果是通过URL直接访问 需要设置Nav的selectedKeys来定位导航栏
     const { pathname } = router;
     if (pathname === '/') {
-      setSelectedKeys(['/home']);
+      setSelectedKeys([HOME_PAGE_PATH]);
       // 路由到/home
-      router.push('/home').then((result) => {
+      router.push(HOME_PAGE_PATH).then((result) => {
         if (!result) {
           console.log('router push failed');
         }
@@ -107,20 +128,13 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
     return () => clearTimeout(timer);
   }, []);
 
-  const userLogout = async () => {
-    localStorage.removeItem(CURRENT_USER_KEY);
-    // window.location.href = '/user/login';
-    await userLogoutUsingPOST();
-    await router.push('/user/login');
-  };
-
   return loading ? (
     <Loading />
   ) : (
     <Layout className={styles.frame}>
       {/*写进document的head*/}
       <Head>
-        <title>API PLATFORM</title>
+        <title>{APP_NAME}</title>
       </Head>
       <Header style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
         <Nav
@@ -128,7 +142,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
             logo: (
               <img src="//lf1-cdn-tos.bytescm.com/obj/ttfe/ies/semi/webcast_logo.svg" alt="logo" />
             ),
-            text: 'NEXT PLATFORM',
+            text: APP_NAME,
           }}
           mode="horizontal"
           footer={
@@ -169,10 +183,9 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
       <Layout>
         <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)', marginTop: '8px' }}>
           <Nav
-            items={routes}
+            items={getNavItems()}
             selectedKeys={selectedKeys}
             onSelect={(data) => {
-              console.log('trigger onSelect: ', data.selectedKeys);
               // @ts-ignore
               setSelectedKeys(data.selectedKeys);
               // @ts-ignore
@@ -200,7 +213,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
                 marginBottom: '24px',
               }}
               compact={false}
-              routes={setBreadcrumbRoutes(routes, router.pathname)}
+              routes={setBreadcrumbRouteList(ROUTE_CONFIG, router.pathname)}
             />
             <div className={styles.skeleton}>
               <Skeleton placeholder={<Skeleton.Paragraph rows={2} />} loading={false}>
