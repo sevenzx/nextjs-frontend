@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Dropdown, Layout, Nav, Skeleton } from '@douyinfe/semi-ui';
+import { Avatar, Button, Dropdown, Layout, Nav } from '@douyinfe/semi-ui';
 import {
   IconBell,
   IconGithubLogo,
@@ -17,41 +17,10 @@ import {
   getCurrentUserUsingGET,
   userLogoutUsingPOST,
 } from '@/services/api-platform-user/userController';
-import {
-  ROUTE_CONFIG,
-  USER_LOGIN_PATH,
-  FORBIDDEN_PATH,
-} from '@/config/route.config';
+import { ROUTE_CONFIG, USER_LOGIN_PATH, FORBIDDEN_PATH } from '@/config/route.config';
 import { APP_NAME } from '@/config/constant';
 
 const { Header, Footer, Sider, Content } = Layout;
-
-/**
- * 根据path获取层级文本
- * @param items
- * @param targetKey
- */
-function setBreadcrumbRouteList(items: any[], targetKey: string): string[] {
-  let result: string[] = [];
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item.path === targetKey) {
-      result.push(item.text);
-      break;
-    }
-    if (item.items) {
-      for (let j = 0; j < item.items.length; j++) {
-        const subItem = item.items[j];
-        if (subItem.path === targetKey) {
-          result.push(item.text);
-          result.push(subItem.text);
-          break;
-        }
-      }
-    }
-  }
-  return result;
-}
 
 export default function NavigationFrame({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -76,6 +45,9 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
 
     return ROUTE_CONFIG.filter((route) => {
       // 过滤掉不需要的元素
+      if (route.redirect) {
+        return false;
+      }
       return !route.role || route.role.includes(user?.userRole as string);
     }).map((route) => {
       let newRoute = { ...route };
@@ -106,7 +78,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
         // 路由到/login
         router.push(USER_LOGIN_PATH).then((result) => {
           if (!result) {
-            console.log('router1 push failed');
+            console.log('router push user login failed');
           }
         });
       } else {
@@ -136,7 +108,11 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
         // @ts-ignore
         // 无权限访问
         if (routeRole.length > 0 && !routeRole.includes(currentUser.userRole)) {
-          router.push(FORBIDDEN_PATH);
+          router.push(FORBIDDEN_PATH).then((r) => {
+            if (!r) {
+              console.log('router push forbidden failed');
+            }
+          });
         }
         console.log(res);
       }
@@ -230,20 +206,11 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
             style={{
               padding: '24px',
               backgroundColor: 'var(--semi-color-bg-0)',
+              marginBottom: '100px',
             }}
           >
-            <Breadcrumb
-              style={{
-                marginBottom: '24px',
-              }}
-              compact={false}
-              routes={setBreadcrumbRouteList(ROUTE_CONFIG, router.pathname)}
-            />
-            <div className={styles.skeleton}>
-              <Skeleton placeholder={<Skeleton.Paragraph rows={2} />} loading={false}>
-                {children}
-              </Skeleton>
-            </div>
+            {/*在这里插入子组件*/}
+            {children}
           </Content>
           <Footer className={styles.footer}>
             <span

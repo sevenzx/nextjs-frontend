@@ -66,9 +66,24 @@ export async function getSecretByKeyUsingGET(
   });
 }
 
+/** listUserByFuzzy POST /api/user/list/fuzzy */
+export async function listUserByFuzzyUsingPOST(
+  body: API.FuzzyQueryRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResultPageVOUserVO>('/api/user/list/fuzzy', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** listUserByPage POST /api/user/list/page */
 export async function listUserByPageUsingPOST(
-  body: API.UserQueryDTO,
+  body: API.PageRequest,
   options?: { [key: string]: any },
 ) {
   return request<API.ResultPageVOUserVO>('/api/user/list/page', {

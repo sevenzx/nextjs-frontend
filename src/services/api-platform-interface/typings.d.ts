@@ -62,24 +62,6 @@ declare namespace API {
     url?: string;
   };
 
-  type InterfaceInfoQueryDTO = {
-    ascend?: boolean;
-    current?: number;
-    description?: string;
-    id?: number;
-    method?: string;
-    name?: string;
-    needTotal?: boolean;
-    pageSize?: number;
-    requestHeader?: string;
-    requestParams?: string;
-    responseHeader?: string;
-    sortField?: string;
-    status?: number;
-    url?: string;
-    userId?: number;
-  };
-
   type InterfaceInfoUpdateDTO = {
     description?: string;
     id?: number;
@@ -92,25 +74,15 @@ declare namespace API {
     url?: string;
   };
 
-  type listInterfaceInfoUsingGETParams = {
+  type PageRequest = {
     ascend?: boolean;
     current?: number;
-    description?: string;
-    id?: number;
-    method?: string;
-    name?: string;
     needTotal?: boolean;
     pageSize?: number;
-    requestHeader?: string;
-    requestParams?: string;
-    responseHeader?: string;
     sortField?: string;
-    status?: number;
-    url?: string;
-    userId?: number;
   };
 
-  type PageVOInterfaceInfo = {
+  type PageVOInterfaceInfo_ = {
     current?: number;
     pageSize?: number;
     records?: InterfaceInfo[];
@@ -123,15 +95,9 @@ declare namespace API {
     message?: string;
   };
 
-  type ResultInterfaceInfo = {
+  type ResultInterfaceInfo_ = {
     code?: number;
     data?: InterfaceInfo;
-    message?: string;
-  };
-
-  type ResultListInterfaceInfo = {
-    code?: number;
-    data?: InterfaceInfo[];
     message?: string;
   };
 
@@ -141,9 +107,9 @@ declare namespace API {
     message?: string;
   };
 
-  type ResultPageVOInterfaceInfo = {
+  type ResultPageVOInterfaceInfo_ = {
     code?: number;
-    data?: PageVOInterfaceInfo;
+    data?: PageVOInterfaceInfo_;
     message?: string;
   };
 

@@ -3,6 +3,16 @@ declare namespace API {
     id?: number;
   };
 
+  type FuzzyQueryRequest = {
+    ascend?: boolean;
+    current?: number;
+    fields?: string[];
+    keyword?: string;
+    needTotal?: boolean;
+    pageSize?: number;
+    sortField?: string;
+  };
+
   type getSecretByKeyUsingGETParams = {
     /** userKey */
     userKey: string;
@@ -16,6 +26,14 @@ declare namespace API {
   type InvokeInterfaceUserVO = {
     id?: number;
     userSecret?: string;
+  };
+
+  type PageRequest = {
+    ascend?: boolean;
+    current?: number;
+    needTotal?: boolean;
+    pageSize?: number;
+    sortField?: string;
   };
 
   type PageVOUserVO = {
@@ -43,7 +61,7 @@ declare namespace API {
     message?: string;
   };
 
-  type ResultPageVOUserVO= {
+  type ResultPageVOUserVO = {
     code?: number;
     data?: PageVOUserVO;
     message?: string;
@@ -67,22 +85,6 @@ declare namespace API {
   type UserLoginDTO = {
     userAccount?: string;
     userPassword?: string;
-  };
-
-  type UserQueryDTO = {
-    ascend?: boolean;
-    createTime?: string;
-    current?: number;
-    gender?: number;
-    id?: number;
-    needTotal?: boolean;
-    pageSize?: number;
-    sortField?: string;
-    updateTime?: string;
-    userAccount?: string;
-    userAvatar?: string;
-    userRole?: string;
-    username?: string;
   };
 
   type UserRegisterDTO = {

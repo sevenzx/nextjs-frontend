@@ -1,5 +1,6 @@
 interface RouteConfig {
   path: string;
+  redirect?: string;
   text: string;
   icon?: string;
   role?: string[];
@@ -12,6 +13,7 @@ interface RouteConfig {
  * role 权限控制
  */
 export const ROUTE_CONFIG: RouteConfig[] = [
+  { path: '/', text: '默认', redirect: '/home' },
   { path: '/home', text: '首页', icon: 'home' },
   { path: '/table', text: '表格', icon: 'list' },
   {
@@ -21,7 +23,7 @@ export const ROUTE_CONFIG: RouteConfig[] = [
     role: ['admin'],
     items: [
       { path: '/manage/data', text: '基础数据' },
-      { path: '/manage/test', text: '测试功能' },
+      { path: '/manage/user', text: '用户管理' },
     ],
   },
 ];
