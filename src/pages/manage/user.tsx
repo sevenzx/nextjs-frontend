@@ -49,7 +49,7 @@ export default function UserManage() {
       dataIndex: 'userAvatar',
       // @ts-ignore
       render: (_, record) => {
-        return <Avatar src={record.userAvatar} size={'medium'} />;
+        return <Avatar src={record.userAvatar} size={'default'} />;
       },
     },
     {
@@ -151,7 +151,12 @@ export default function UserManage() {
           routes={setBreadcrumbRouteList(router.pathname)}
         />
         <div style={{ marginLeft: 'auto', width: '280px' }}>
-          <Tooltip content={searchFieldsTip} trigger={'click'}>
+          <Tooltip
+            position={'topLeft'}
+            arrowPointAtCenter={false}
+            content={searchFieldsTip}
+            trigger={'click'}
+          >
             <Input
               placeholder={'按字段搜索'}
               size={'large'}

@@ -1,5 +1,5 @@
-import { Button, Form } from '@douyinfe/semi-ui';
-import styles from './login.module.css';
+import { Button, Form, Toast } from '@douyinfe/semi-ui';
+import styles from './user.module.css';
 import { userLoginUsingPOST } from '@/services/api-platform-user/userController';
 import { useUserStore } from '@/lib/useZustand';
 import { useRouter } from 'next/router';
@@ -9,13 +9,14 @@ import { APP_NAME } from '@/config/constant';
 import { USER_REGISTER_PATH } from '@/config/route.config';
 import Head from "next/head";
 
-export default function TablePage() {
+export default function UserLogin() {
   const router = useRouter();
 
   async function login(values: API.UserLoginDTO) {
     let res = (await userLoginUsingPOST(values)) as API.ResultUserVO;
     if (res) {
       useUserStore.setState({ user: res.data });
+      Toast.success('Login success');
       await router.push(HOME_PAGE_PATH);
     }
   }

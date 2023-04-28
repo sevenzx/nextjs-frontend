@@ -8,6 +8,25 @@
     overflow-y: auto;
 }
 
+/*设置导航条*/
+.frame::-webkit-scrollbar {
+    width: 8px; /* 设置滚动条宽度 */
+}
+
+.frame::-webkit-scrollbar-track {
+    background-color: #fff; /* 设置轨道背景色 */
+    border: none; /* 去掉轨道边框 */
+}
+
+.frame::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* 设置滑块颜色 */
+    border-radius: 4px; /* 设置滑块圆角 */
+}
+
+.frame::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa; /* 设置鼠标悬停时滑块颜色 */
+}
+
 .footer {
     display: flex;
     justify-content: center;

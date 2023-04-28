@@ -30,8 +30,10 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState<boolean>(true);
 
   const userLogout = async () => {
+    setLoading(true);
     await userLogoutUsingPOST();
     await router.push(USER_LOGIN_PATH);
+    setLoading(false);
   };
 
   // 通过路由配置生成Nav的items
@@ -206,7 +208,7 @@ export default function NavigationFrame({ children }: { children: React.ReactNod
             style={{
               padding: '24px',
               backgroundColor: 'var(--semi-color-bg-0)',
-              marginBottom: '100px',
+              marginBottom: '48px',
             }}
           >
             {/*在这里插入子组件*/}
