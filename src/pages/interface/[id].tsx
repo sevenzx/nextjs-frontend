@@ -8,7 +8,8 @@ import React, { useState } from 'react';
 import { getClientSign } from '@/lib/util';
 
 export default function InterfaceInfoDetail({ data }: { data: API.InterfaceInfo }) {
-  const [params, setParams] = useState<string>('');
+  // @ts-ignore
+  const [params, setParams] = useState<string>(data.requestParams);
   const [response, setResponse] = useState<string>('');
   const invokeInterface = async () => {
     let timestamp = new Date().getTime();
@@ -55,7 +56,11 @@ export default function InterfaceInfoDetail({ data }: { data: API.InterfaceInfo 
       <br />
       <Card title={'在线调用'}>
         <Form layout={'vertical'}>
-          <TextArea placeholder="请输入请求参数" onChange={(value) => setParams(value)} />
+          <TextArea
+            placeholder="请输入请求参数"
+            defaultValue={data.requestParams}
+            onChange={(value) => setParams(value)}
+          />
           <Button theme={'solid'} onClick={() => invokeInterface()}>
             调用
           </Button>

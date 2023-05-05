@@ -4,13 +4,11 @@ declare namespace API {
   };
 
   type FuzzyQueryRequest = {
-    ascend?: boolean;
     current?: number;
     fields?: string[];
     keyword?: string;
     needTotal?: boolean;
     pageSize?: number;
-    sortField?: string;
   };
 
   type getSecretByKeyUsingGETParams = {
@@ -27,13 +25,11 @@ declare namespace API {
     id?: number;
     userSecret?: string;
   };
-
+  
   type PageRequest = {
-    ascend?: boolean;
     current?: number;
     needTotal?: boolean;
     pageSize?: number;
-    sortField?: string;
   };
 
   type PageVOUserVO = {
@@ -58,6 +54,12 @@ declare namespace API {
   type ResultLong = {
     code?: number;
     data?: number;
+    message?: string;
+  };
+
+  type ResultMapLongUserVO = {
+    code?: number;
+    data?: Record<string, any>;
     message?: string;
   };
 

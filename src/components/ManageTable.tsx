@@ -1,14 +1,15 @@
-import { Breadcrumb, Input, Table, Tooltip } from '@douyinfe/semi-ui';
-import React, { useEffect, useState } from 'react';
-import styles from './manage-table.module.css';
-import { IconSearch } from '@douyinfe/semi-icons';
-import { setBreadcrumbRouteList } from '@/lib/util';
-import { useRouter } from 'next/router';
+import { Breadcrumb, Input, Table, Tooltip } from "@douyinfe/semi-ui";
+import React, { useEffect, useState } from "react";
+import styles from "./manage-table.module.css";
+import { IconSearch } from "@douyinfe/semi-icons";
+import { setBreadcrumbRouteList } from "@/lib/util";
+import { useRouter } from "next/router";
 
 interface TableProps {
   columns: any[];
   pageFunction: (param: any) => Promise<any>;
   fuzzyFunction: (param: any) => Promise<any>;
+  dataFunction?: (param: any[]) => Promise<any[]>;
   reloadFlag?: boolean;
 }
 
@@ -18,7 +19,7 @@ interface QueryParam {
   keyword?: string;
 }
 
-export default function ManageTable(props: TableProps) {
+export default function ManageTable (props: TableProps) {
   const { columns, pageFunction, fuzzyFunction } = props;
   const [loading, setLoading] = useState<boolean>(true);
   const [dataSource, setDataSource] = useState<API.UserVO>();
@@ -42,7 +43,7 @@ export default function ManageTable(props: TableProps) {
     });
 
     setSearchFields(searchFields);
-    setSearchFieldsTip(searchFieldTitles.join('、'));
+    setSearchFieldsTip(searchFieldTitles.join("、"));
   }, []);
 
   useEffect(() => {
@@ -63,18 +64,22 @@ export default function ManageTable(props: TableProps) {
 
   const getData = async (queryParam: QueryParam) => {
     let res;
-    console.log('queryParam', queryParam);
+    console.log("queryParam", queryParam);
     if (queryParam.keyword) {
       res = await fuzzyFunction({ ...queryParam, fields: searchFields });
     } else {
       res = await pageFunction({
         current: queryParam.current,
-        pageSize: queryParam.pageSize,
+        pageSize: queryParam.pageSize
       });
     }
-    let data = res.data as API.PageVOUserVO;
+    let data = res.data;
+    let records = data.records;
+    if (props.dataFunction) {
+      records = await props.dataFunction(data.records);
+    }
     // @ts-ignore
-    setDataSource(data.records);
+    setDataSource(records);
     // @ts-ignore
     setTotal(data.total);
   };
@@ -83,29 +88,29 @@ export default function ManageTable(props: TableProps) {
     <>
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
+          display: "flex",
+          justifyContent: "space-between"
           // marginBottom: '12px',
         }}
       >
         <Breadcrumb
           style={{
-            marginBottom: '24px',
-            marginRight: 'auto',
+            marginBottom: "24px",
+            marginRight: "auto"
           }}
           compact={false}
           routes={setBreadcrumbRouteList(router.pathname)}
         />
-        <div style={{ marginLeft: 'auto', width: '280px' }}>
+        <div style={{ marginLeft: "auto", width: "280px" }}>
           <Tooltip
-            position={'topLeft'}
+            position={"topLeft"}
             arrowPointAtCenter={false}
             content={searchFieldsTip}
-            trigger={'hover'}
+            trigger={"hover"}
           >
             <Input
-              placeholder={'按字段搜索'}
-              size={'large'}
+              placeholder={"按字段搜索"}
+              size={"large"}
               prefix={<IconSearch />}
               onChange={(value) => setKeyword(value)}
               onEnterPress={() => {
@@ -134,7 +139,7 @@ export default function ManageTable(props: TableProps) {
             onChange: (current, pageSize) => {
               setQueryParam({ ...queryParam, current: current, pageSize: pageSize });
             },
-            total: total,
+            total: total
           }}
         />
       </div>

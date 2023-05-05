@@ -53,8 +53,8 @@ npm install
 
      ```typescript
      export const ROUTE_CONFIG: RouteConfig[] = [
-       { path: '/', text: '默认', redirect: '/interface-info' },
-       { path: '/interface-info', text: '首页', icon: 'home' },
+       { path: '/', text: '默认', redirect: '/interface' },
+       { path: '/interface', text: '首页', icon: 'home' },
        { path: '/table', text: '表格', icon: 'list' },
        {
          path: '/manage',

@@ -81,6 +81,18 @@ export async function listUserByFuzzyUsingPOST(
   });
 }
 
+/** listUserByIds POST /api/user/list/ids */
+export async function listUserByIdsUsingPOST(body: number[], options?: { [key: string]: any }) {
+  return request<API.ResultMapLongUserVO>('/api/user/list/ids', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** listUserByPage POST /api/user/list/page */
 export async function listUserByPageUsingPOST(
   body: API.PageRequest,

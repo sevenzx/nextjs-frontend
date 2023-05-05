@@ -59,7 +59,7 @@ export default function HomePage() {
             <div>
               <Typography.Text
                 style={{ color: 'var(--semi-color-primary)', fontWeight: 600 }}
-                link={{ href: `/interface-info/${item.id}` }}
+                link={{ href: `/interface/${item.id}` }}
                 onClick={() => console.log(item.name)}
               >
                 {item.name}

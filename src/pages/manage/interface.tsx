@@ -1,96 +1,105 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   listInterfaceInfoByFuzzyUsingPOST,
   listInterfaceInfoByPageUsingPOST,
   offlineInterfaceInfoUsingPOST,
-  onlineInterfaceInfoUsingPOST,
-} from '@/services/interface-service/interfaceInfoController';
-import moment from 'moment';
-import { STATUS_MAP, TIME_FORMAT } from '@/config/constant';
-import ManageTable from '@/components/ManageTable';
-import { Button, ButtonGroup, Tag, Toast } from '@douyinfe/semi-ui';
+  onlineInterfaceInfoUsingPOST
+} from "@/services/interface-service/interfaceInfoController";
+import moment from "moment";
+import { STATUS_MAP, TIME_FORMAT } from "@/config/constant";
+import ManageTable from "@/components/ManageTable";
+import { Button, ButtonGroup, Tag, Toast } from "@douyinfe/semi-ui";
+import { listUserByIdsUsingPOST } from "@/services/user-service/userController";
 
-export default function InterfaceManage() {
+interface DataType extends API.InterfaceInfo {
+  username: string;
+}
+
+export default function InterfaceManage () {
   const [reloadFlag, setReloadFlag] = useState<boolean>(false);
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      fuzzySearch: true,
+      title: "ID",
+      dataIndex: "id",
+      fuzzySearch: true
     },
     {
-      title: '名称',
-      dataIndex: 'name',
-      fuzzySearch: true,
+      title: "名称",
+      dataIndex: "name",
+      fuzzySearch: true
     },
     {
-      title: '描述',
-      dataIndex: 'description',
-      fuzzySearch: true,
+      title: "描述",
+      dataIndex: "description",
+      fuzzySearch: true
     },
     {
-      title: '路径',
-      dataIndex: 'path',
-      fuzzySearch: true,
+      title: "路径",
+      dataIndex: "path",
+      fuzzySearch: true
     },
     // {
     //   title: '请求头',
     //   dataIndex: 'requestHeader',
     // },
     {
-      title: '请求参数',
-      dataIndex: 'requestParams',
+      title: "请求参数",
+      dataIndex: "requestParams"
     },
     // {
     //   title: '响应头',
     //   dataIndex: 'responseHeader',
     // },
     {
-      title: '状态',
-      dataIndex: 'status',
+      title: "状态",
+      dataIndex: "status",
       // @ts-ignore
       render: (_, record) => {
         // @ts-ignore
         let item = STATUS_MAP[record.status];
         return <Tag color={item.color}>{item.text}</Tag>;
-      },
+      }
+    },
+    // {
+    //   title: "创建人",
+    //   dataIndex: "userId"
+    // },
+    {
+      title: "创建人",
+      dataIndex: "username"
     },
     {
-      title: '创建人',
-      dataIndex: 'userId',
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
+      title: "创建时间",
+      dataIndex: "createTime",
       // @ts-ignore
       render: (_, record) => {
         return moment(record.createTime).format(TIME_FORMAT);
-      },
+      }
     },
     {
-      title: '更新时间',
-      dataIndex: 'updateTime',
+      title: "更新时间",
+      dataIndex: "updateTime",
       // @ts-ignore
       render: (_, record) => {
         return moment(record.updateTime).format(TIME_FORMAT);
-      },
+      }
     },
     {
-      title: '操作',
-      dataIndex: 'option',
-      valueType: 'option',
+      title: "操作",
+      dataIndex: "option",
+      valueType: "option",
       // @ts-ignore
       render: (_, record) => {
         return (
           <ButtonGroup>
-            <Button key="config" theme={'borderless'} onClick={() => {}}>
+            <Button key="config" theme={"borderless"} onClick={() => {}}>
               编辑
             </Button>
             {record.status === 0 ? (
               <Button
                 key="online"
-                theme={'borderless'}
+                theme={"borderless"}
                 onClick={() => {
                   handleOnlineInterface(record).then((r) => console.log(r));
                 }}
@@ -100,8 +109,8 @@ export default function InterfaceManage() {
             ) : (
               <Button
                 key="offline"
-                theme={'borderless'}
-                type={'warning'}
+                theme={"borderless"}
+                type={"warning"}
                 onClick={() => {
                   handleOfflineInterface(record).then((r) => console.log(r));
                 }}
@@ -109,13 +118,13 @@ export default function InterfaceManage() {
                 下线
               </Button>
             )}
-            <Button key="delete" theme={'borderless'} type={'danger'} onClick={() => {}}>
+            <Button key="delete" theme={"borderless"} type={"danger"} onClick={() => {}}>
               删除
             </Button>
           </ButtonGroup>
         );
-      },
-    },
+      }
+    }
   ];
 
   /**
@@ -125,18 +134,18 @@ export default function InterfaceManage() {
    * @param fields
    */
   const handleOnlineInterface = async (fields: API.IdRequest) => {
-    const id = fields.id + '';
-    Toast.info({ content: '正在发布', id: id });
+    const id = fields.id + "";
+    Toast.info({ content: "正在发布", id: id });
     try {
       let res = await onlineInterfaceInfoUsingPOST({ ...fields });
       if (res.data) {
-        Toast.success({ content: '发布成功!', id: id });
+        Toast.success({ content: "发布成功!", id: id });
         // 刷新页面
         setReloadFlag(!reloadFlag);
         return true;
       }
     } catch (error: any) {
-      Toast.error('发布失败!' + error.message);
+      Toast.error("发布失败!" + error.message);
       return false;
     }
   };
@@ -148,20 +157,40 @@ export default function InterfaceManage() {
    * @param fields
    */
   const handleOfflineInterface = async (fields: API.IdRequest) => {
-    const id = fields.id + '';
-    Toast.info({ content: '正在下线', id: id });
+    const id = fields.id + "";
+    Toast.info({ content: "正在下线", id: id });
     try {
       let res = await offlineInterfaceInfoUsingPOST({ ...fields });
       if (res.data) {
-        Toast.success({ content: '下线成功!', id: id });
+        Toast.success({ content: "下线成功!", id: id });
         // 刷新页面
         setReloadFlag(!reloadFlag);
         return true;
       }
     } catch (error: any) {
-      Toast.error('下线失败!' + error.message);
+      Toast.error("下线失败!" + error.message);
       return false;
     }
+  };
+
+  const setDataSource = async (records: API.InterfaceInfo[]): Promise<DataType[]> => {
+    let ids: number[] = [];
+    records.forEach((record) => {
+      ids.push(record.userId as number);
+    });
+    let res = await listUserByIdsUsingPOST(ids);
+    console.log(res);
+    let info: DataType[] = [];
+    if (res.data) {
+      records.forEach((record) => {
+        info.push({
+          ...record,
+          // @ts-ignore
+          username: res.data[record.userId].username
+        });
+      });
+    }
+    return info;
   };
 
   return (
@@ -169,6 +198,7 @@ export default function InterfaceManage() {
       columns={columns}
       pageFunction={listInterfaceInfoByPageUsingPOST}
       fuzzyFunction={listInterfaceInfoByFuzzyUsingPOST}
+      dataFunction={setDataSource}
       reloadFlag={reloadFlag}
     />
   );
