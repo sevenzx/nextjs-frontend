@@ -1,38 +1,75 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a [Next.js](https://nextjs.org/) project with [Semi Design](https://semi.design/zh-CN/)
 
-## Getting Started
+## 开始使用
 
-First, run the development server:
+**安装依赖**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**项目配置**
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+1.   根据openapi生成前端代码（src/config/openapi.config.ts）后端使用[Knife4j](https://doc.xiaominfo.com/)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+     ```typescript
+     const apiConfigList = [
+       {
+         requestLibPath: axiosConfigPath,
+         // 后端swagger文档路径
+         schemaPath: 'http://localhost:7529/api/v2/api-docs',
+         // 生成代码路径
+         serversPath: './src/services',
+         // 项目名
+         projectName: 'user-service',
+       },
+       {
+           // ...
+       }
+     ]
+     ```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+     配置完成后 在package.json中运行openapi或者
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+     ```bash
+     ts-node ./src/config/openapi.config.ts
+     ```
 
-## Learn More
+2.   axios配置（src/config/axios.config.ts）
 
-To learn more about Next.js, take a look at the following resources:
+     ```typescript
+     const instance = axios.create({
+       // baseURL: process.env.API_URL, // 设置API的URL
+       baseURL: 'http://localhost:8090', // 网关的URL
+       timeout: 5000, // 请求超时时间
+       headers: {
+         'Content-Type': 'application/json', // 设置请求头
+       },
+       withCredentials: true, // 设置跨域
+     })
+     ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.   配置全局权限控制（src/config/route.config.ts）
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+     ```typescript
+     export const ROUTE_CONFIG: RouteConfig[] = [
+       { path: '/', text: '默认', redirect: '/interface-info' },
+       { path: '/interface-info', text: '首页', icon: 'home' },
+       { path: '/table', text: '表格', icon: 'list' },
+       {
+         path: '/manage',
+         text: '管理',
+         icon: 'setting',
+         role: ['admin'], // 通过role来进行导航栏和页面控制
+         items: [
+           { path: '/manage/user', text: '用户管理' },
+           { path: '/manage/interface', text: '接口管理' },
+         ],
+       },
+     ];
+     ```
 
-## Deploy on Vercel
+     还需要将`userRole`字段进行全局替换成自己的角色字段
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+     
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
