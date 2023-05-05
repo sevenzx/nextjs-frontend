@@ -1,6 +1,6 @@
 import { Button, Form, Toast } from '@douyinfe/semi-ui';
 import styles from './user.module.css';
-import { userRegisterUsingPOST } from '@/services/api-platform-user/userController';
+import { userRegisterUsingPOST } from '@/services/user-service/userController';
 import { useRouter } from 'next/router';
 import { IconLock, IconUser } from '@douyinfe/semi-icons';
 import { APP_NAME, USER_ACCOUNT_REGEX, USER_PASSWORD_REGEX } from '@/config/constant';

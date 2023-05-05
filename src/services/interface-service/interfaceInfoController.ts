@@ -39,7 +39,7 @@ export async function getInterfaceInfoByIdUsingGET(
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResultInterfaceInfo_>(`/api/interface/info/get/${param0}`, {
+  return request<API.ResultInterfaceInfo>(`/api/interface/info/get/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -51,7 +51,7 @@ export async function listInterfaceInfoByFuzzyUsingPOST(
   body: API.FuzzyQueryRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResultPageVOInterfaceInfo_>('/api/interface/info/list/fuzzy', {
+  return request<API.ResultPageVOInterfaceInfo>('/api/interface/info/list/fuzzy', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export async function listInterfaceInfoByPageUsingPOST(
   body: API.PageRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResultPageVOInterfaceInfo_>('/api/interface/info/list/page', {
+  return request<API.ResultPageVOInterfaceInfo>('/api/interface/info/list/page', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -102,14 +102,6 @@ export async function onlineInterfaceInfoUsingPOST(
       'Content-Type': 'application/json',
     },
     data: body,
-    ...(options || {}),
-  });
-}
-
-/** testUserClient GET /api/interface/info/test */
-export async function testUserClientUsingGET(options?: { [key: string]: any }) {
-  return request<API.ResultUserVO>('/api/interface/info/test', {
-    method: 'GET',
     ...(options || {}),
   });
 }

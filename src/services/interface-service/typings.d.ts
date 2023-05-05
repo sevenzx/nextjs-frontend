@@ -11,13 +11,11 @@ declare namespace API {
   };
 
   type FuzzyQueryRequest = {
-    ascend?: boolean;
     current?: number;
     fields?: string[];
     keyword?: string;
     needTotal?: boolean;
     pageSize?: number;
-    sortField?: string;
   };
 
   type getInterfaceInfoByIdUsingGETParams = {
@@ -43,12 +41,12 @@ declare namespace API {
     isDeleted?: number;
     method?: string;
     name?: string;
+    path?: string;
     requestHeader?: string;
     requestParams?: string;
     responseHeader?: string;
     status?: number;
     updateTime?: string;
-    url?: string;
     userId?: number;
   };
 
@@ -56,10 +54,10 @@ declare namespace API {
     description?: string;
     method?: string;
     name?: string;
+    path?: string;
     requestHeader?: string;
     requestParams?: string;
     responseHeader?: string;
-    url?: string;
   };
 
   type InterfaceInfoUpdateDTO = {
@@ -67,22 +65,20 @@ declare namespace API {
     id?: number;
     method?: string;
     name?: string;
+    path?: string;
     requestHeader?: string;
     requestParams?: string;
     responseHeader?: string;
     status?: number;
-    url?: string;
   };
 
   type PageRequest = {
-    ascend?: boolean;
     current?: number;
     needTotal?: boolean;
     pageSize?: number;
-    sortField?: string;
   };
 
-  type PageVOInterfaceInfo_ = {
+  type PageVOInterfaceInfo = {
     current?: number;
     pageSize?: number;
     records?: InterfaceInfo[];
@@ -95,7 +91,7 @@ declare namespace API {
     message?: string;
   };
 
-  type ResultInterfaceInfo_ = {
+  type ResultInterfaceInfo = {
     code?: number;
     data?: InterfaceInfo;
     message?: string;
@@ -107,9 +103,9 @@ declare namespace API {
     message?: string;
   };
 
-  type ResultPageVOInterfaceInfo_ = {
+  type ResultPageVOInterfaceInfo = {
     code?: number;
-    data?: PageVOInterfaceInfo_;
+    data?: PageVOInterfaceInfo;
     message?: string;
   };
 

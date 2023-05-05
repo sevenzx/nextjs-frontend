@@ -1,4 +1,6 @@
 import { ROUTE_CONFIG } from '@/config/route.config';
+import crypto from 'crypto';
+import { CLIENT_SECRET, SALT } from '@/config/constant';
 
 /**
  * 根据path获取面包屑组件层级文本
@@ -24,4 +26,13 @@ export function setBreadcrumbRouteList(targetPath: string): string[] {
     }
   }
   return result;
+}
+
+/**
+ * 获取客户端签名
+ * @param timestamp 时间戳
+ */
+export function getClientSign(timestamp: number): string {
+  const content = `${SALT}.${timestamp}.${CLIENT_SECRET}`;
+  return crypto.createHash('md5').update(content).digest('hex');
 }

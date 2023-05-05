@@ -1,6 +1,6 @@
 import { Button, Form, Toast } from '@douyinfe/semi-ui';
 import styles from './user.module.css';
-import { userLoginUsingPOST } from '@/services/api-platform-user/userController';
+import { userLoginUsingPOST } from '@/services/user-service/userController';
 import { useUserStore } from '@/lib/useZustand';
 import { useRouter } from 'next/router';
 import { HOME_PAGE_PATH } from '@/config/route.config';

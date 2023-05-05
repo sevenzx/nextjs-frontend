@@ -16,7 +16,7 @@ import { useUserStore } from '@/lib/useZustand';
 import {
   getCurrentUserUsingGET,
   userLogoutUsingPOST,
-} from '@/services/api-platform-user/userController';
+} from '@/services/user-service/userController';
 import { ROUTE_CONFIG, USER_LOGIN_PATH, FORBIDDEN_PATH } from '@/config/route.config';
 import { APP_NAME } from '@/config/constant';
 

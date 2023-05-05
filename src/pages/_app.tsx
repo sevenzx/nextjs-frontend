@@ -2,35 +2,28 @@ import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import NavigationFrame from '@/components/NavigationFrame';
 import { useRouter } from 'next/router';
-import { ROUTE_CONFIG } from '@/config/route.config';
-import { useEffect, useState } from 'react';
+import { ROUTE_CONFIG, USER_LOGIN_PATH, USER_REGISTER_PATH } from '@/config/route.config';
+import { useEffect } from 'react';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-
-  // 用于判断是否需要展示导航栏
-  const [needNavRouteList, setNeedNavRouteList] = useState<string[]>([]);
+  const NoNavRouteList = [USER_LOGIN_PATH, USER_REGISTER_PATH];
 
   useEffect(() => {
     let redirectPath = undefined;
-
-    let list: string[] = [];
     ROUTE_CONFIG.forEach((item) => {
       if (item.items) {
         item.items.forEach((subItem) => {
-          list.push(subItem.path);
           if (subItem.path === router.pathname && subItem.redirect) {
             redirectPath = subItem.redirect;
           }
         });
       } else {
-        list.push(item.path);
         if (item.path === router.pathname && item.redirect) {
           redirectPath = item.redirect;
         }
       }
     });
-    setNeedNavRouteList(list);
 
     if (redirectPath) {
       router.push(redirectPath).then((r) => {
@@ -41,11 +34,11 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, []);
 
-  return needNavRouteList.includes(router.pathname) ? (
+  return NoNavRouteList.includes(router.pathname) ? (
+    <Component {...pageProps} />
+  ) : (
     <NavigationFrame>
       <Component {...pageProps} />
     </NavigationFrame>
-  ) : (
-    <Component {...pageProps} />
   );
 }

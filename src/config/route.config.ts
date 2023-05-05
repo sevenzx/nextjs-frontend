@@ -13,8 +13,8 @@ interface RouteConfig {
  * role 权限控制
  */
 export const ROUTE_CONFIG: RouteConfig[] = [
-  { path: '/', text: '默认', redirect: '/home' },
-  { path: '/home', text: '首页', icon: 'home' },
+  { path: '/', text: '默认', redirect: '/interface-info' },
+  { path: '/interface-info', text: '首页', icon: 'home' },
   { path: '/table', text: '表格', icon: 'list' },
   {
     path: '/manage',
@@ -22,14 +22,14 @@ export const ROUTE_CONFIG: RouteConfig[] = [
     icon: 'setting',
     role: ['admin'],
     items: [
-      { path: '/manage/data', text: '基础数据' },
       { path: '/manage/user', text: '用户管理' },
+      { path: '/manage/interface', text: '接口管理' },
     ],
   },
 ];
 
 /** 首页路径 */
-export const HOME_PAGE_PATH: string = '/home';
+export const HOME_PAGE_PATH: string = '/interface-info';
 
 /** 403路径 */
 export const FORBIDDEN_PATH: string = '/403';
