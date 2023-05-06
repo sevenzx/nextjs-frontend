@@ -1,16 +1,16 @@
-import { GetServerSideProps } from 'next';
-import { getInterfaceInfoByIdUsingGET } from '@/services/interface-service/interfaceInfoController';
-import { Button, Card, Descriptions, Divider, Form, Tag, TextArea } from '@douyinfe/semi-ui';
-import moment from 'moment';
-import { CLIENT_KEY, STATUS_MAP, TIME_FORMAT } from '@/config/constant';
-import request from '@/config/axios.config';
-import React, { useState } from 'react';
-import { getClientSign } from '@/lib/util';
+import { GetServerSideProps } from "next";
+import { getInterfaceInfoByIdUsingGET } from "@/services/interface-service/interfaceInfoController";
+import { Button, Card, Descriptions, Divider, Form, Tag, TextArea, Toast } from "@douyinfe/semi-ui";
+import moment from "moment";
+import { CLIENT_KEY, STATUS_MAP, TIME_FORMAT } from "@/config/constant";
+import request from "@/config/axios.config";
+import React, { useState } from "react";
+import { getClientSign } from "@/lib/util";
 
-export default function InterfaceInfoDetail({ data }: { data: API.InterfaceInfo }) {
+export default function InterfaceInfoDetail ({ data }: { data: API.InterfaceInfo }) {
   // @ts-ignore
   const [params, setParams] = useState<string>(data.requestParams);
-  const [response, setResponse] = useState<string>('');
+  const [response, setResponse] = useState<string>("");
   const invokeInterface = async () => {
     let timestamp = new Date().getTime();
     let sign = getClientSign(timestamp);
@@ -19,15 +19,18 @@ export default function InterfaceInfoDetail({ data }: { data: API.InterfaceInfo 
       headers: {
         userKey: CLIENT_KEY,
         timestamp: timestamp,
-        sign: sign,
-      },
+        sign: sign
+      }
     });
+    if (res.data) {
+      Toast.success("invoke success");
+    }
     setResponse(res.data);
   };
 
   return (
     <>
-      <Card title={'接口详情'}>
+      <Card title={"接口详情"}>
         <Descriptions>
           <Descriptions.Item itemKey="名称">{data.name}</Descriptions.Item>
           <Descriptions.Item itemKey="描述">{data.description}</Descriptions.Item>
@@ -54,14 +57,14 @@ export default function InterfaceInfoDetail({ data }: { data: API.InterfaceInfo 
       <br />
       <Divider />
       <br />
-      <Card title={'在线调用'}>
-        <Form layout={'vertical'}>
+      <Card title={"在线调用"}>
+        <Form layout={"vertical"}>
           <TextArea
             placeholder="请输入请求参数"
             defaultValue={data.requestParams}
             onChange={(value) => setParams(value)}
           />
-          <Button theme={'solid'} onClick={() => invokeInterface()}>
+          <Button theme={"solid"} onClick={() => invokeInterface()}>
             调用
           </Button>
           {response ? <TextArea rows={10} value={JSON.stringify(response, null, 4)} /> : null}
@@ -76,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let res = await getInterfaceInfoByIdUsingGET({ id: Number(id) });
   return {
     props: {
-      data: res.data,
-    },
+      data: res.data
+    }
   };
 };
